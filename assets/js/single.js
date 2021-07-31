@@ -1,7 +1,22 @@
 var repoNameEl = document.querySelector("#repo-name");
 var issueContainerEl = document.querySelector("#issues-container");
 var limitWarningEl = document.querySelector("#limit-warning");
-var queryString = document.location.search;
+
+var getRepoName = function() {
+  // grab repo name from url query string
+  var queryString = document.location.search;
+  var repoName = queryString.split("=")[1];
+
+  if (repoName) {
+    // display repo name on the page
+    repoNameEl.textContent = repoName;
+
+    getRepoIssues(repoName);
+  } else {
+    // if no repo was given, redirect to the homepage
+    document.location.replace("./index.html");
+  }
+};
 
 var getRepoIssues = function(repo) {
     // format the github api url
@@ -19,8 +34,7 @@ var getRepoIssues = function(repo) {
           displayWarning(repo);
         }
       });
-    }
-    else {
+    } else {
      // if not successful, redirect to homepage
     document.location.replace("./index.html");
     }
@@ -45,7 +59,6 @@ var displayIssues = function(issues) {
 var titleEl = document.createElement("span");
 titleEl.textContent = issues[i].title;
 
-
 // append to container
 issueEl.appendChild(titleEl);
 
@@ -59,7 +72,6 @@ if (issues[i].pull_request) {
   typeEl.textContent = "(Issue)";
 }
 
-
 // append to container
 issueEl.appendChild(typeEl);
 
@@ -69,29 +81,17 @@ issueContainerEl.appendChild(issueEl);
 };
 
 var displayWarning = function(repo) {
-    // add text to warning container
+  // add text to warning container
     limitWarningEl.textContent = "To see more than 30 issues, visit ";
 
+  // create link element   
   var linkEl = document.createElement("a");
-  linkEl.textContent = "See More Issues on GitHub.com";
+  linkEl.textContent = "GitHub.com";
   linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
   linkEl.setAttribute("target", "_blank");
 
   // append to warning container
   limitWarningEl.appendChild(linkEl);
 };
-var getRepoName = function() {
-  // grab repo name from url query string
-  var queryString = document.location.search;
-  var repoName = queryString.split("=")[1];
 
-  if (repoName) {
-    // display repo name on the page
-    repoNameEl.textContent = repoName;
-
-    getRepoIssues(repoName);
-  } else {
-    // if no repo was given, redirect to the homepage
-    document.location.replace("./index.html");
-  }
-};
+getRepoName();
